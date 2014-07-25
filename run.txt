@@ -1,0 +1,25 @@
+Gerar os arquivos:
+cd /Users/ricardo/Projects/UFF/Mestrado/workspace/topk-similarity
+mvn clean install -P debug -DskipTests=true
+chmod +x ./target/classes/data-gen.sh && ./target/classes/data-gen.sh 3 100 10
+chmod +x ./target/classes/*.sh && ./target/classes/copy-files.sh copy hostfile /tmp/topk/data/input
+
+Copiar o fonte
+cp mapreduce.cpp ~/shared/ricardo/workspace/mapReduce/
+
+
+
+mpic++ mapreduce.cpp -o mapreduce -O0 -g -lm
+mpirun -np 25 mapreduce 3 5 10 /tmp/topk/data/input/ /tmp/topk/data/
+killall mapreduce; ssh node2 "killall mapreduce"
+
+
+
+# build
+# mpic++ mapreduce.cpp -o mapreduce -O0 -g -lm
+
+# running
+# mpirun -np 15 Debug/map 15 3 /tmp/topk/data/input/ /tmp/topk/data/
+
+
+./run.sh -k 5 -m 5 -n 10 -h ../hosts_uff -i /tmp/topk/data/input/ -o /tmp/topk/data/ 
